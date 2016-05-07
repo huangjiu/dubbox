@@ -48,6 +48,7 @@
 		<module>dubbo-registry</module>
 		<module>dubbo-monitor</module>
 		<module>dubbo-config</module>
+		<module>dubbo-javaconfig</module>
 		<module>dubbo</module>
 		<module>dubbo-simple</module>
 		<module>dubbo-admin</module>
@@ -84,7 +85,7 @@
 	</profiles>
 	<properties>
 		<!-- Common libs -->
-		<spring.bom.version>3.2.9.RELEASE</spring.bom.version>
+		<spring.bom.version>4.2.5.RELEASE</spring.bom.version>
 		<javassist_version>3.15.0-GA</javassist_version>
 		<netty_version>3.7.0.Final</netty_version>
 		<mina_version>1.1.7</mina_version>

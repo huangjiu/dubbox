@@ -18,6 +18,9 @@ package com.alibaba.dubbo.demo.bid;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.dubbo.config.annotation.Service;
+
+
 public class BidServiceImpl implements BidService {
 
     public BidResponse bid(BidRequest request) {
