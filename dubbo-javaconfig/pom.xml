@@ -13,9 +13,6 @@
   <modules>
   	<module>dubbo-javaconfig-annotation</module>
   	<module>dubbo-javaconfig-spring</module>
-  	<module>dubbo-javaconfig-demo-api</module>
-  	<module>dubbo-javaconfig-demo-consumer</module>
-  	<module>dubbo-javaconfig-demo-provider</module>
   </modules>
   
   <build>
