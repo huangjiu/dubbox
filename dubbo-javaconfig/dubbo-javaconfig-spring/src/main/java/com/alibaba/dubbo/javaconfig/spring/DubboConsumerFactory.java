@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationContextAware;
 import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.config.ReferenceConfig;
-import com.alibaba.dubbo.javaconfig.annotation.EnableDubbo;
+import com.alibaba.dubbo.javaconfig.annotation.Dubbo;
 
 public class DubboConsumerFactory extends AbstractConfigFactory
 		implements BeanFactoryPostProcessor , ApplicationContextAware, InstantiationAwareBeanPostProcessor , DisposableBean {
@@ -84,7 +84,7 @@ public class DubboConsumerFactory extends AbstractConfigFactory
 			if (name.length() > 3 && name.startsWith("set") && method.getParameterTypes().length == 1
 					&& Modifier.isPublic(method.getModifiers()) && !Modifier.isStatic(method.getModifiers())) {
 				try {
-					if (method.getParameterTypes()[0].getAnnotation(EnableDubbo.class) != null
+					if (method.getParameterTypes()[0].getAnnotation(Dubbo.class) != null
 							&& method.getAnnotation(Autowired.class) != null) {
 						classes.add(method.getParameterTypes()[0]);
 					}
@@ -97,7 +97,7 @@ public class DubboConsumerFactory extends AbstractConfigFactory
 		}
 		Field[] fields = beanClass.getDeclaredFields();
 		for (Field field : fields) {
-			if (field.getType().getAnnotation(EnableDubbo.class) != null && field.getAnnotation(Autowired.class) != null) {
+			if (field.getType().getAnnotation(Dubbo.class) != null && field.getAnnotation(Autowired.class) != null) {
 				classes.add(field.getType());
 			}
 

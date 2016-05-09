@@ -1,8 +1,8 @@
 package com.alibaba.demo.service;
 
-import com.alibaba.dubbo.javaconfig.annotation.EnableDubbo;
+import com.alibaba.dubbo.javaconfig.annotation.Dubbo;
 
-@EnableDubbo
+@Dubbo
 public interface DemoService {
 
 	long push(ValueObject value);

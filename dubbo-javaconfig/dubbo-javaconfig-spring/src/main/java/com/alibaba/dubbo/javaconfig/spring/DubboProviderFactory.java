@@ -26,7 +26,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.alibaba.dubbo.common.utils.ConcurrentHashSet;
 import com.alibaba.dubbo.config.ServiceConfig;
-import com.alibaba.dubbo.javaconfig.annotation.EnableDubbo;
+import com.alibaba.dubbo.javaconfig.annotation.Dubbo;
 
 /**
  * AnnotationBean
@@ -57,7 +57,7 @@ public class DubboProviderFactory extends AbstractConfigFactory
 	private Class<?> getDubboxInterface(Class<?> clazz) {
 		Class<?>[] interfaces = clazz.getInterfaces();
 		for (Class<?> class1 : interfaces) {
-			EnableDubbo dubbox = class1.getAnnotation(EnableDubbo.class);
+			Dubbo dubbox = class1.getAnnotation(Dubbo.class);
 			if (dubbox != null) {
 				return class1;
 			}
