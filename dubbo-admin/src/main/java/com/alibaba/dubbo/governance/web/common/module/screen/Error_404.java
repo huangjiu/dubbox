@@ -19,7 +19,7 @@ import java.util.Map;
 
 import com.alibaba.dubbo.governance.web.common.pulltool.RootContextPath;
 
-public class Error_404 {
+public final class Error_404 {
 	
 	public void execute(Map<String, Object> context) throws Throwable {
 		String contextPath = (String) context.get("request.contextPath");
