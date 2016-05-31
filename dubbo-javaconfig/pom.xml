@@ -13,19 +13,21 @@
   <modules>
   	<module>dubbo-javaconfig-annotation</module>
   	<module>dubbo-javaconfig-spring</module>
+    <module>dubbo-javaconfig-demo-api</module>
+    <module>dubbo-javaconfig-demo-consumer</module>
+    <module>dubbo-javaconfig-demo-provider</module>
   </modules>
   
-  <build>
+  <!-- <build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>
+	</build> -->
 </project>

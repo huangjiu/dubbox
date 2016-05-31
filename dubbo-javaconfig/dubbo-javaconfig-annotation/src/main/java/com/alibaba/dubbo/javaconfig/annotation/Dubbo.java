@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * @export
  */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Target({ElementType.TYPE })
 public @interface Dubbo {
 	

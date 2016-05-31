@@ -41,13 +41,13 @@ import com.alibaba.dubbo.config.support.Parameter;
  * @author william.liangf
  * @export
  */
-public class DubboxReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean, ApplicationContextAware, InitializingBean, DisposableBean {
+public class DubboReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean, ApplicationContextAware, InitializingBean, DisposableBean {
 
 	private static final long serialVersionUID = 213195494150089726L;
 	
 	private transient ApplicationContext applicationContext;
 
-	public DubboxReferenceBean() {
+	public DubboReferenceBean() {
         super();
     }
 

@@ -1,49 +1,115 @@
-/*
- * Copyright 1999-2012 Alibaba Group.
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *      http://www.apache.org/licenses/LICENSE-2.0
- *  
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.alibaba.dubbo.javaconfig.spring;
 
+import java.util.List;
 import java.util.Set;
 
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.alibaba.dubbo.common.logger.Logger;
+import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.common.utils.ConcurrentHashSet;
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.config.ServiceConfig;
-import com.alibaba.dubbo.javaconfig.annotation.Dubbo;
 
-/**
- * AnnotationBean
- * 
- * @author william.liangf
- * @export
- */
-public class DubboProviderFactory extends AbstractConfigFactory
-		implements DisposableBean, BeanPostProcessor, ApplicationContextAware {
+public class DubboProviderFactory implements ApplicationContextAware, InitializingBean, DisposableBean {
 
-	private final Set<ServiceConfig<?>> serviceConfigs = new ConcurrentHashSet<ServiceConfig<?>>();
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Set<DubboServiceBean<?>> serviceConfigs = new ConcurrentHashSet<DubboServiceBean<?>>();
 	private ApplicationContext applicationContext;
+	private String annotationPackage;
+	private DubboConfig dubboxConfig;
 
+	public DubboProviderFactory(String annotationPackage , DubboConfig dubboxConfig) {
+		super();
+		this.annotationPackage = annotationPackage;
+		this.dubboxConfig = dubboxConfig;
+	}
+	
+
+	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
 
+	private void exportProviders() {
+		DubboScannerAnnotationClass scanner = new DubboScannerAnnotationClass();
+		logger.debug("scan package : " + annotationPackage);
+		List<Class> providers = scanner.scan(annotationPackage);
+		logger.debug("provider length : " + providers.size());
+		for (Class provider : providers) {
+			try {
+				logger.debug("provider : " + provider.getName());
+				export(provider);
+			} catch (Exception e) {
+				logger.debug("error export provider .", e);
+			}
+		}
+	}
+
+	private void export(Class<?> provider) throws Exception {
+
+		logger.debug("Loading The provider : " + provider.getName());
+		DubboServiceBean<Object> serviceConfig = new DubboServiceBean<Object>();
+		serviceConfig.setInterface(provider);
+		if (applicationContext != null) {
+			Object providerRef = applicationContext.getBean(provider);
+			serviceConfig.setInterface(provider);
+			serviceConfig.setApplicationContext(applicationContext);
+			serviceConfig.setBeanName(provider.getName());
+			serviceConfig.setRef(providerRef);
+			this.initService(serviceConfig);
+			serviceConfig.afterPropertiesSet();
+			logger.debug("init service : " + provider.getName());
+			serviceConfigs.add(serviceConfig);
+			serviceConfig.export();
+			logger.debug("export service : " + provider.getName());
+		}
+	}
+	
+	
+	private void initService(DubboServiceBean<Object> serviceConfig) {
+		if (this.dubboxConfig != null) {
+			
+			serviceConfig.setAsync(this.dubboxConfig.isAsync());
+
+			if (this.dubboxConfig.getDelay() > 0) {
+				serviceConfig.setDelay(this.dubboxConfig.getDelay());
+			}
+			if (this.dubboxConfig.getTimeout() > 0) {
+				serviceConfig.setTimeout(this.dubboxConfig.getTimeout());
+			}
+			if (this.dubboxConfig.getRetries() > 0) {
+				serviceConfig.setRetries(this.dubboxConfig.getRetries());
+			}
+			if (this.dubboxConfig.getConnections() > 0) {
+				serviceConfig.setConnections(this.dubboxConfig.getConnections());
+			}
+			if (!StringUtils.isBlank(this.dubboxConfig.getVersion())) {
+				serviceConfig.setVersion(this.dubboxConfig.getVersion());
+			}
+			if (this.dubboxConfig.getProtocol() != null) {
+				serviceConfig.setProtocol(this.dubboxConfig.getProtocol());
+			}
+			if (!StringUtils.isBlank(this.dubboxConfig.getLoadbalance())) {
+				serviceConfig.setLoadbalance(this.dubboxConfig.getLoadbalance());
+			}
+			if (!StringUtils.isBlank(this.dubboxConfig.getToken())) {
+				serviceConfig.setToken(this.dubboxConfig.getToken());
+			}
+		}
+
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		exportProviders();
+	}
+
+	@Override
 	public void destroy() throws Exception {
 		for (ServiceConfig<?> serviceConfig : serviceConfigs) {
 			try {
@@ -52,56 +118,7 @@ public class DubboProviderFactory extends AbstractConfigFactory
 				logger.error(e.getMessage(), e);
 			}
 		}
+
 	}
 
-	private Class<?> getDubboxInterface(Class<?> clazz) {
-		Class<?>[] interfaces = clazz.getInterfaces();
-		for (Class<?> class1 : interfaces) {
-			Dubbo dubbox = class1.getAnnotation(Dubbo.class);
-			if (dubbox != null) {
-				return class1;
-			}
-		}
-		return null;
-	}
-
-	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (!isMatchPackage(bean.getClass())) {
-			return bean;
-		}
-		Class<?> clazz = bean.getClass();
-		if (isProxyBean(bean)) {
-			clazz = AopUtils.getTargetClass(bean);
-		}
-		Class<?> provider = getDubboxInterface(clazz);
-		if (provider == null) {
-			return bean;
-		}
-
-		DubboxServiceBean<Object> serviceConfig = new DubboxServiceBean<Object>();
-		serviceConfig.setInterface(provider);
-		if (applicationContext != null) {
-			serviceConfig.setApplicationContext(applicationContext);
-			try {
-				serviceConfig.afterPropertiesSet();
-			} catch (RuntimeException e) {
-				throw (RuntimeException) e;
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new IllegalStateException(e.getMessage(), e);
-			}
-		}
-		serviceConfig.setRef(bean);
-		serviceConfigs.add(serviceConfig);
-		serviceConfig.export();
-		return bean;
-	}
-
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		return bean;
-	}
-
-	private boolean isProxyBean(Object bean) {
-		return AopUtils.isAopProxy(bean);
-	}
 }
