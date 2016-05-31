@@ -16,6 +16,7 @@ import org.springframework.util.SystemPropertyUtils;
 import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.javaconfig.annotation.Dubbo;
+import com.alibaba.dubbo.javaconfig.annotation.DubboDeploy;
 
 public class DubboScannerAnnotationClass {
 
@@ -59,7 +60,7 @@ public class DubboScannerAnnotationClass {
 	private boolean isCandidate(MetadataReader metadataReader) throws ClassNotFoundException {
 		try {
 			Class c = Class.forName(metadataReader.getClassMetadata().getClassName());
-			if (c.getAnnotation(Dubbo.class) != null) {
+			if (c.getAnnotation(Dubbo.class) != null || c.getAnnotation(DubboDeploy.class) != null) {
 				return true;
 			}
 		} catch (Throwable e) {

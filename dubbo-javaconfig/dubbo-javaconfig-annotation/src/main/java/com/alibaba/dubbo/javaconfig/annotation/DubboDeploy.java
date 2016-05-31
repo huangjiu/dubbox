@@ -7,15 +7,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *  auto register dubbox service
+ *  auto register dubbox service of the build assembly
  * 
  * @author louis.huang
  * @export
  */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Target({ElementType.TYPE })
-public @interface Dubbo {
+public @interface DubboDeploy {
 	
    String value() default "";
 
