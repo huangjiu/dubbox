@@ -19,7 +19,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.alibaba.demo.service.DemoService;
+import com.alibaba.demo.service.RefService;
 import com.alibaba.demo.service.impl.DemoServiceImpl;
+import com.alibaba.demo.service.impl.RefService2;
+import com.alibaba.demo.service.impl.RefServiceImpl;
 
 /**
  * @author Jinkai.Ma
@@ -27,9 +30,19 @@ import com.alibaba.demo.service.impl.DemoServiceImpl;
 @Configuration
 public class DubboxConfig {
 
-    @Bean
-    public DemoService aneService() {
-        return new DemoServiceImpl();
-    }
+	@Bean
+	public DemoService aneService() {
+		return new DemoServiceImpl();
+	}
 
+	@Bean
+	public RefService refService() {
+		return new RefServiceImpl();
+	}
+
+	
+	@Bean
+	public RefService2 refService2() {
+		return new RefService2();
+	}
 }
