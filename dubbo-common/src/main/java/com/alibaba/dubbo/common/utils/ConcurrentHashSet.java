@@ -18,6 +18,7 @@ package com.alibaba.dubbo.common.utils;
 import java.util.AbstractSet;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,7 +28,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E>, java
 
 	private static final Object PRESENT = new Object();
 
-	private final ConcurrentHashMap<E, Object> map;
+	private final Map<E, Object> map;
 	
 	public ConcurrentHashSet(){
 	    map = new ConcurrentHashMap<E, Object>();

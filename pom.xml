@@ -726,16 +726,15 @@
 		</developer>
 	</developers>
 
-
 	<distributionManagement>
-		<repository>
-			<id>releases</id>
-			<url>http://repo.ane56.com/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<name>snapshots</name>
-			<url>http://repo.ane56.com/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://repo.ane56.com/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>snapshots</name>
+            <url>http://repo.ane56.com/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
