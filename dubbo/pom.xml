@@ -556,7 +556,7 @@
     </build>
 
     <distributionManagement>
-        <repository>
+       <!--  <repository>
             <id>releases</id>
             <url>http://repo.ane56.com/content/repositories/releases</url>
         </repository>
@@ -564,6 +564,17 @@
             <id>snapshots</id>
             <name>snapshots</name>
             <url>http://repo.ane56.com/content/repositories/snapshots</url>
+        </snapshotRepository> -->
+
+        <repository>
+            <id>zoomy-release</id>
+            <name>zoomy-release Repository</name>
+            <url>http://172.16.10.101:8081/nexus/content/repositories/zoomy-release</url>
+        </repository>
+        <snapshotRepository>
+            <id>zoomy-snapshot</id>
+            <name>zoomy-snapshot Repository</name>
+            <url>http://172.16.10.101:8081/nexus/content/repositories/zoomy-snapshot</url>
         </snapshotRepository>
     </distributionManagement>
 </project>

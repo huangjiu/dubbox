@@ -23,11 +23,7 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.pool.impl.GenericObjectPool;
-
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisConnectionException;
-import redis.clients.jedis.exceptions.JedisDataException;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
@@ -43,6 +39,11 @@ import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcResult;
 import com.alibaba.dubbo.rpc.protocol.AbstractInvoker;
 import com.alibaba.dubbo.rpc.protocol.AbstractProtocol;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisConnectionException;
+import redis.clients.jedis.exceptions.JedisDataException;
 
 
 /**
@@ -86,7 +87,21 @@ public class RedisProtocol extends AbstractProtocol {
                 config.timeBetweenEvictionRunsMillis = url.getParameter("time.between.eviction.runs.millis", 0);
             if (url.getParameter("min.evictable.idle.time.millis", 0) > 0)
                 config.minEvictableIdleTimeMillis = url.getParameter("min.evictable.idle.time.millis", 0);
-            final JedisPool jedisPool = new JedisPool(config, url.getHost(), url.getPort(DEFAULT_PORT), 
+            
+            //new config
+            GenericObjectPoolConfig newConfig = new GenericObjectPoolConfig();
+            newConfig.setTestOnBorrow(config.testOnBorrow);
+            newConfig.setTestOnReturn(config.testOnReturn);
+            newConfig.setTestWhileIdle(config.testWhileIdle);
+            newConfig.setMaxIdle(config.maxIdle);
+            newConfig.setMinIdle(config.minIdle);
+            newConfig.setMaxTotal(config.maxActive);
+            newConfig.setMaxWaitMillis(config.maxWait);
+            newConfig.setNumTestsPerEvictionRun(config.numTestsPerEvictionRun);
+            newConfig.setTimeBetweenEvictionRunsMillis(config.timeBetweenEvictionRunsMillis);
+            newConfig.setMinEvictableIdleTimeMillis(config.minEvictableIdleTimeMillis);
+            
+            final JedisPool jedisPool = new JedisPool(newConfig, url.getHost(), url.getPort(DEFAULT_PORT), 
                 url.getParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT));
             final int expiry = url.getParameter("expiry", 0);
             final String get = url.getParameter("get", "get");

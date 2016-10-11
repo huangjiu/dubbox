@@ -9,4 +9,8 @@
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>The dubbo javaconfig annotation module of dubbo project</description>
+  
+  <properties>
+    <skip_maven_deploy>false</skip_maven_deploy>
+  </properties>
 </project>

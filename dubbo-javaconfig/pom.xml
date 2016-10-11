@@ -10,6 +10,10 @@
   <name>${project.artifactId}</name>
   <description>The javaconfig module of dubbo project</description>
 
+  <properties>
+    <skip_maven_deploy>true</skip_maven_deploy>
+  </properties>
+
   <modules>
   	<module>dubbo-javaconfig-annotation</module>
   	<module>dubbo-javaconfig-spring</module>

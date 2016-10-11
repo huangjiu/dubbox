@@ -33,22 +33,23 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
 import org.apache.commons.pool.impl.GenericObjectPool;
-
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPubSub;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.common.utils.NamedThreadFactory;
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.common.utils.UrlUtils;
 import com.alibaba.dubbo.registry.NotifyListener;
 import com.alibaba.dubbo.registry.support.FailbackRegistry;
 import com.alibaba.dubbo.rpc.RpcException;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 /**
@@ -105,6 +106,19 @@ public class RedisRegistry extends FailbackRegistry {
             config.timeBetweenEvictionRunsMillis = url.getParameter("time.between.eviction.runs.millis", 0);
         if (url.getParameter("min.evictable.idle.time.millis", 0) > 0)
             config.minEvictableIdleTimeMillis = url.getParameter("min.evictable.idle.time.millis", 0);
+        
+      //new config
+        GenericObjectPoolConfig newConfig = new GenericObjectPoolConfig();
+        newConfig.setTestOnBorrow(config.testOnBorrow);
+        newConfig.setTestOnReturn(config.testOnReturn);
+        newConfig.setTestWhileIdle(config.testWhileIdle);
+        newConfig.setMaxIdle(config.maxIdle);
+        newConfig.setMinIdle(config.minIdle);
+        newConfig.setMaxTotal(config.maxActive);
+        newConfig.setMaxWaitMillis(config.maxWait);
+        newConfig.setNumTestsPerEvictionRun(config.numTestsPerEvictionRun);
+        newConfig.setTimeBetweenEvictionRunsMillis(config.timeBetweenEvictionRunsMillis);
+        newConfig.setMinEvictableIdleTimeMillis(config.minEvictableIdleTimeMillis);
 
         String cluster = url.getParameter("cluster", "failover");
         if (! "failover".equals(cluster) && ! "replicate".equals(cluster)) {
@@ -133,11 +147,11 @@ public class RedisRegistry extends FailbackRegistry {
                 port = DEFAULT_REDIS_PORT;
             }
             if (StringUtils.isEmpty(password)) {
-                this.jedisPools.put(address, new JedisPool(config, host, port,
+                this.jedisPools.put(address, new JedisPool(newConfig, host, port,
                         url.getParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT)));
             } else {
                 // 使用密码连接。  此处要求备用redis与主要redis使用相同的密码
-                this.jedisPools.put(address, new JedisPool(config, host, port,
+                this.jedisPools.put(address, new JedisPool(newConfig, host, port,
                         url.getParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT), password));
             }
         }
